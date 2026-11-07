@@ -191,16 +191,21 @@ async def seed() -> None:
         ]
         admin_role = roles["admin"]
         for perm_name in all_permissions:
-            perm = PermissionModel(id=uuid.uuid4(), role_id=admin_role.id, permission=perm_name)
-            session.add(perm)
+            _existing = (await session.execute(select(PermissionModel).where(PermissionModel.role_id == admin_role.id, PermissionModel.permission == perm_name))).scalar_one_or_none()
+            if not _existing:
+                session.add(PermissionModel(id=uuid.uuid4(), role_id=admin_role.id, permission=perm_name))
 
         moderator_role = roles["moderator"]
         for perm_name in ["properties.moderate", "moderation.view", "moderation.manage", "bookings.view", "users.view"]:
-            session.add(PermissionModel(id=uuid.uuid4(), role_id=moderator_role.id, permission=perm_name))
+            _existing = (await session.execute(select(PermissionModel).where(PermissionModel.role_id == moderator_role.id, PermissionModel.permission == perm_name))).scalar_one_or_none()
+            if not _existing:
+                session.add(PermissionModel(id=uuid.uuid4(), role_id=moderator_role.id, permission=perm_name))
 
         finance_role = roles["finance_manager"]
         for perm_name in ["finance.view", "finance.manage", "wallet.view", "reports.view"]:
-            session.add(PermissionModel(id=uuid.uuid4(), role_id=finance_role.id, permission=perm_name))
+            _existing = (await session.execute(select(PermissionModel).where(PermissionModel.role_id == finance_role.id, PermissionModel.permission == perm_name))).scalar_one_or_none()
+            if not _existing:
+                session.add(PermissionModel(id=uuid.uuid4(), role_id=finance_role.id, permission=perm_name))
 
         # ── USERS ──
 
