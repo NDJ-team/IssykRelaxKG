@@ -1,0 +1,50 @@
+# Render Blueprint — IssykRelax
+# Deploy: Render Dashboard -> New -> Blueprint -> select repo
+
+databases:
+  - name: issykrelax-db
+    databaseName: issykrelax
+    user: issykrelax
+    plan: free
+
+services:
+  - type: web
+    name: issykrelax-backend
+    runtime: python
+    rootDir: backend
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: alembic upgrade head && python scripts/seed_roles.py && python scripts/seed.py && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "false"
+      - key: CORS_ORIGINS
+        value: "*"
+      - key: DATABASE_URI
+        fromDatabase:
+          name: issykrelax-db
+          property: connectionString
+      - key: REDIS_URI
+        sync: false
+      # Optional: Upstash free Redis URL, e.g. rediss://:password@host:port/0
+
+  - type: web
+    name: issykrelax-frontend
+    runtime: node
+    rootDir: frontend
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: node server/index.mjs
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: NODE_ENV
+        value: production
+      - key: VITE_API_URL
+        value: https://issykrelax-backend.onrender.com/api/v1
+      - key: API_INTERNAL_URL
+        value: https://issykrelax-backend.onrender.com/api/v1

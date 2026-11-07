@@ -1,0 +1,35 @@
+# Python
+__pycache__
+*.py[cod]
+*.egg-info
+.venv
+venv/
+env/
+
+# Environment
+.env
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+pgdata/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.pnpm-store/
+
+# Backend
+backend/alembic/versions/.gitkeep
+
+# Other
+STATUS.md

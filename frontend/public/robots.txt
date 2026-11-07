@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /owner-dashboard
+Disallow: /add-listing
+Disallow: /admin
+
+Sitemap: https://issykrelax.kg/sitemap.xml
